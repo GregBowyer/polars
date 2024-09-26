@@ -595,9 +595,14 @@ impl DataType {
                 Box::new(dt.to_arrow_field(PlSmallStr::from_static("item"), compat_level)),
                 *size,
             )),
-            List(dt) => Ok(ArrowDataType::LargeList(Box::new(
-                dt.to_arrow_field(PlSmallStr::from_static("item"), compat_level),
-            ))),
+            List(dt) => {
+                let dt = Bow::new(dt.to_arrow_field(PlSmallStr::from_static("item"), compat_level));
+                if compact_level.0 >= 1 {
+                    Ok(ArrowDataType::List(dt))
+                } else {
+                    Ok(ArrowDataType::LargeList(dt))
+                }
+            },
             Null => Ok(ArrowDataType::Null),
             #[cfg(feature = "object")]
             Object(_, Some(reg)) => Ok(reg.physical_dtype.clone()),
