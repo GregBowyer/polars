@@ -597,7 +597,7 @@ impl DataType {
             )),
             List(dt) => {
                 let dt = Box::new(dt.to_arrow_field(PlSmallStr::from_static("item"), compat_level));
-                if compact_level.0 >= 1 {
+                if compat_level.0 >= 1 {
                     Ok(ArrowDataType::List(dt))
                 } else {
                     Ok(ArrowDataType::LargeList(dt))
